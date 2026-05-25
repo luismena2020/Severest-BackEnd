@@ -1,0 +1,13 @@
+function() {
+
+  var random = Math.floor(Math.random() * 99999);
+
+  return {
+  usuario: {
+    nome: "Usuario " + random,
+    email: "usuario" + random + "@mail.com",
+    password: "123456",
+    administrador: "true"
+  }
+}
+}
