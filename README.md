@@ -1,107 +1,63 @@
-# QA Automation Challenge - ServeRest API
+# QA Automation Backend Challenge - ServeRest API con Karate DSL
 
 ## Descripción
 
-Proyecto de automatización QA BackEnd utilizando Karate DSL para validar los endpoints CRUD de usuarios de la API ServeRest.
+Este proyecto contiene una suite de pruebas automatizadas para la API de Usuarios de ServeRest utilizando Karate DSL.
 
-La suite incluye:
+Se validan las operaciones CRUD de usuarios:
 
-* Validaciones funcionales
-* Casos positivos y negativos
-* Validaciones de esquema JSON
-* Generación dinámica de datos
-* Organización modular y reutilizable
+* GET /usuarios
+* POST /usuarios
+* GET /usuarios/{_id}
+* PUT /usuarios/{_id}
+* DELETE /usuarios/{_id}
+
+La automatización incluye validaciones funcionales, validaciones de esquema JSON, manejo de datos dinámicos y escenarios positivos y negativos.
 
 ---
 
-# Tecnologías Utilizadas
+## Tecnologías Utilizadas
 
 * Java 17
-* Maven
-* Karate DSL
-* JUnit 5
-* GitHub Actions (opcional)
-
----
-
-# API Utilizada
-
-https://serverest.dev/
-
-Documentación:
-https://serverest.dev/
-
----
-
-# Estructura del Proyecto
-
-```bash
-qa-karate-serverest/
-│
-├── pom.xml
-├── karate-config.js
-├── README.md
-│
-├── src/test/java
-│   ├── runners/
-│   │   └── TestRunner.java
-│   │
-│   ├── features/
-│   │   └── usuarios/
-│   │       ├── getUsuarios.feature
-│   │       ├── postUsuario.feature
-│   │       ├── getUsuarioById.feature
-│   │       ├── putUsuario.feature
-│   │       └── deleteUsuario.feature
-│   │
-│   ├── schemas/
-│   │   ├── usuarioSchema.json
-│   │   └── usuariosListSchema.json
-│   │
-│   ├── helpers/
-│   │   └── DataGenerator.js
-│   │
-│   └── utils/
-│       └── common.feature
-│
-└── target/
-```
-
----
-
-# Requisitos Previos
-
-Antes de ejecutar el proyecto instalar:
-
-* Java 17+
 * Maven 3.9+
-* Git
+* Karate DSL 1.5.1
+* JUnit 5
 
-Verificar instalación:
+---
+
+## Requisitos Previos
+
+Verificar las versiones instaladas:
 
 ```bash
 java -version
 mvn -version
-git --version
+```
+
+Versiones recomendadas:
+
+```text
+Java 17
+Apache Maven 3.9+
 ```
 
 ---
 
-# Instalación del Proyecto
+## Instalación
 
-## 1. Clonar repositorio
-
-```bash
-git clone <URL_DEL_REPOSITORIO>
-```
-
-## 2. Ingresar al proyecto
+### Clonar el repositorio
 
 ```bash
-cd qa-karate-serverest
+git clone https://github.com/usuario/karate-serverest-api.git
 ```
 
-## 3. Instalar dependencias
+### Ingresar al proyecto
+
+```bash
+cd karate-serverest-api
+```
+
+### Descargar dependencias
 
 ```bash
 mvn clean install
@@ -109,110 +65,243 @@ mvn clean install
 
 ---
 
-# Ejecución de Tests
+## Estructura del Proyecto
 
-## Ejecutar todos los tests
+```text
+karate-serverest-api
+│
+├── src
+│   └── test
+│       └── java
+│           │
+│           ├── features
+│           │   └── usuarios
+│           │       ├── getUsuarios.feature
+│           │       ├── createUsuario.feature
+│           │       ├── getUsuarioById.feature
+│           │       ├── putUsuario.feature
+│           │       └── deleteUsuario.feature
+│           │
+│           ├── helpers
+│           │   ├── usuario-generator.js
+│           │   └── schemas.js
+│           │
+│           ├── runners
+│           │   └── TestRunner.java
+│           │
+│           └── karate-config.js
+│
+├── pom.xml
+├── README.md
+└── target
+```
+
+---
+
+## Configuración
+
+La URL base se configura en:
+
+```javascript
+function fn() {
+    return {
+        baseUrl: 'https://serverest.dev'
+    };
+}
+```
+
+---
+
+## Ejecución de Pruebas
+
+### Ejecutar todas las pruebas
 
 ```bash
 mvn test
 ```
 
-## Ejecutar un feature específico
+### Ejecutar una feature específica
 
 ```bash
 mvn test -Dkarate.options="classpath:features/usuarios/getUsuarios.feature"
 ```
 
-## Ejecutar 
+### Ejecutar por tags
 
-Ir TestRunner.java y cambiar
-return Karate.run(
-"classpath:features/usuarios/getUsuarios.feature"
-);
----en este caso getUsuarios.feature  es el nombre del  feature que 
-queremos ejecutar y podemos cambiarlo por getUsuarioById,postUsuario ,etc
-
-# Reportes
-
-Karate genera automáticamente reportes HTML en:
+```gherkin
+@smoke
+Scenario: Obtener usuarios
+```
 
 ```bash
+mvn test -Dkarate.options="--tags @smoke"
+```
+
+---
+
+## Casos de Prueba Implementados
+
+### GET /usuarios
+
+#### Positivos
+
+* Obtener lista de usuarios
+* Validar estructura de respuesta
+* Validar cantidad de usuarios
+
+---
+
+### POST /usuarios
+
+#### Positivos
+
+* Crear usuario con datos válidos
+
+#### Negativos
+
+* Crear usuario con email duplicado
+* Validar campos obligatorios
+
+---
+
+### GET /usuarios/{id}
+
+#### Positivos
+
+* Buscar usuario existente
+
+#### Negativos
+
+* Buscar usuario inexistente
+
+---
+
+### PUT /usuarios/{id}
+
+#### Positivos
+
+* Actualizar usuario existente
+
+#### Negativos
+
+* Actualizar usuario inexistente
+* Validar campos obligatorios
+
+---
+
+### DELETE /usuarios/{id}
+
+#### Positivos
+
+* Eliminar usuario existente
+
+#### Negativos
+
+* Eliminar usuario inexistente
+
+---
+
+## Validación de Esquemas
+
+Los contratos JSON se centralizan en:
+
+```text
+helpers/schemas.js
+```
+
+Ejemplo:
+
+```javascript
+var usuarioSchema = {
+    nome: '#string',
+    email: '#string',
+    password: '#string',
+    administrador: '#string',
+    _id: '#string'
+};
+```
+
+---
+
+## Generación de Datos de Prueba
+
+Se utiliza un generador dinámico para evitar colisiones de email:
+
+```javascript
+function() {
+
+    var timestamp = new Date().getTime();
+
+    return {
+        nome: 'Usuario ' + timestamp,
+        email: 'usuario' + timestamp + '@mail.com',
+        password: '123456',
+        administrador: 'true'
+    };
+}
+```
+
+---
+
+## Reportes
+
+Después de ejecutar las pruebas, Karate genera reportes automáticamente.
+
+Ubicación:
+
+```text
 target/karate-reports/
 ```
 
 Abrir:
 
-```bash
-karate-summary.html
+```text
+target/karate-reports/karate-summary.html
 ```
 
----
+El reporte incluye:
 
-# Cobertura de Pruebas
-
-## Endpoints cubiertos
-
-| Método | Endpoint       | Descripción        |
-| ------ | -------------- | ------------------ |
-| GET    | /usuarios      | Obtener usuarios   |
-| POST   | /usuarios      | Registrar usuario  |
-| GET    | /usuarios/{id} | Buscar usuario     |
-| PUT    | /usuarios/{id} | Actualizar usuario |
-| DELETE | /usuarios/{id} | Eliminar usuario   |
+* Casos ejecutados
+* Casos exitosos
+* Casos fallidos
+* Request y Response
+* Tiempo de ejecución
+* Logs
 
 ---
 
-# Casos Positivos
+## Estrategia de Automatización
 
-* Obtener lista de usuarios
-* Crear usuario válido
-* Buscar usuario existente
-* Actualizar usuario existente
-* Eliminar usuario existente
+### Independencia de Pruebas
 
----
+Cada escenario genera sus propios datos para evitar dependencias entre pruebas.
 
-# Casos Negativos
+### Reutilización
 
-* Crear usuario duplicado
-* Buscar usuario inexistente
-* Actualizar usuario inexistente
-* Eliminar usuario inexistente
-* Validaciones de datos inválidos
+Se utilizan:
 
----
+* Generadores de datos
+* Schemas compartidos
+* Configuración centralizada
 
-# Estrategia de Automatización
+### Cobertura
 
-La automatización fue diseñada utilizando una arquitectura modular y reusable.
+La suite cubre:
 
-## Principios aplicados
+* Operaciones CRUD completas
+* Casos positivos
+* Casos negativos
+* Validaciones funcionales
+* Validaciones de contrato
 
-* DRY (Don't Repeat Yourself)
-* Reutilización de componentes
-* Separación por responsabilidades
-* Independencia de escenarios
-* Datos dinámicos para evitar colisiones
+### Mantenibilidad
 
-## Patrones utilizados
-
-*POM
-
+La solución se organiza por funcionalidades y permite escalar fácilmente a nuevos endpoints de ServeRest.
 
 ---
 
-# Autor
+## Autor
 
 Nombre: Luis Mena
----
 
-# Recursos Oficiales
-
-Karate DSL:
-https://karatelabs.github.io/karate/
-
-ServeRest:
-https://serverest.dev/
-
-JUnit 5:
-https://junit.org/junit5/
+Fecha: Junio 2026

@@ -6,7 +6,7 @@ function() {
         usuario: {
             nome: "Usuario " + random,
             email: "usuario" + random + "@mail.com",
-            password: "123456",
+            password: "123444",
             administrador: "true"
         }
     }
